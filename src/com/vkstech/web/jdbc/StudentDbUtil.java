@@ -1,6 +1,7 @@
 package com.vkstech.web.jdbc;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -69,5 +70,32 @@ public class StudentDbUtil {
 			}
 		} catch (Exception e) {
 		}
+	}
+
+	public void addStudent(Student student) throws SQLException {
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+
+		try {
+			//get db connection
+			connection = dataSource.getConnection();
+			
+			// create sql for insert
+			String sql = "insert into student (first_name, last_name, email) values(?,?,?)";
+			preparedStatement = connection.prepareStatement(sql);
+
+			// set the param values for the student
+			preparedStatement.setString(1, student.getFirstName());
+			preparedStatement.setString(2, student.getLastName());
+			preparedStatement.setString(3, student.getEmail());
+
+			// execute sql insert
+			preparedStatement.execute();
+		} finally {
+			// clean up JDBC objects
+			closeConnection(connection, preparedStatement, null);
+		}
+
 	}
 }
